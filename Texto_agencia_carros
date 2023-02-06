@@ -1,0 +1,172 @@
+create database agencia_carros;
+use agencia_carros;
+
+create table Setores(
+cod_setor int(3) not null auto_increment primary key,
+nome varchar(20) not null
+);
+
+create table Carros(
+id int(3) not null primary key auto_increment,
+placa varchar(7) null,
+nome varchar(20) not null,
+modelo varchar(20) not null,
+ano int(4) not null,
+valor real(8,2) null,
+qtd_estoque int(3) not null,
+cod_setor int(3) not null,
+dono varchar(20) not null,
+dt_revisao Date null,
+foreign key (cod_setor) references Setores (cod_setor)
+);
+
+
+create table Funcionarios(
+CPF int(12) not null primary key,
+nome varchar(20) not null,
+endereco varchar(40) not null,
+salario real(6,2) not null,
+cod_setor int(3) not null,
+foreign key (cod_setor) references Setores (cod_setor)
+);
+
+create table Clientes(
+CPF int(12) not null primary key,
+nome varchar(20) not null,
+telefone int(12) null,
+endereco varchar(40) not null,
+placa_do_carro varchar(7) not null,
+CPF_funcionario int(12) not null,
+foreign key (CPF_funcionario) references Funcionarios (CPF)
+);
+
+create table Historico(
+id_operacao int(3) not null primary key auto_increment,
+CPF_cliente int(12) not null,
+id_carro_novo int(3) not null,
+placa_carro_usado varchar(7) null,
+operacao varchar(5) not null,
+lucro real(8,2) not null,
+CPF_funcionario int(12) not null,
+data Date not null,
+foreign key (CPF_cliente) references Clientes (CPF),
+foreign key (id_carro_novo) references Carros (id),
+foreign key (CPF_funcionario) references Funcionarios (CPF)
+);
+
+create table Pecas(
+cod_peca int(5) not null primary key auto_increment,
+nome_peca varchar(15) not null,
+valor real(6,2) not null,
+qtd_p_esto int(3) not null,
+cod_setor int(3) not null,
+foreign key (cod_setor) references Setores (cod_setor)
+);
+
+
+
+
+
+insert into Pecas values (null, "Capo", 300.00, 5, 2);
+insert into Pecas values (null, "Parabrisa", 150.00, 3, 2);
+insert into Pecas values (null, "Volante", 110.00, 3, 1);
+
+
+insert into Setores values (null, "setor_1");
+insert into Setores values (null, "setor_2");
+
+
+insert into Carros values (null, null, "carro_1", "Tesla", 2022, 500000.00, 2, 1, "agencia", null);
+insert into Carros values (null, null, "carro_2", "FordKa", 2019, 30000.00, 20, 1, "agencia", null);
+insert into Carros values (null, null, "carro_3", "Jipe", 2015, 50000.00, 10, 1, "agencia", null);
+insert into Carros values (null, null, "carro_4", "Fusca", 1989, 70000.00, 4, 2, "agencia", null);
+insert into Carros values (null, null, "carro_5", "Palio", 2010, 20200.00, 20, 2, "agencia", null);
+insert into Carros values (null, null, "carro_6", "Uno", 2012, 24000.00, 15, 2, "agencia", null);
+insert into Carros values (null, null, "carro_7", "Tracker", 2009, 41000.00, 5, 2, "agencia", null);
+
+insert into Funcionarios values (134564326, "Junior", "rua do imperador", 2500.00, 1);
+insert into Funcionarios values (234524678, "Julia", "rua santos dummont", 3000.00, 2);
+insert into Funcionarios values (948654876, "Augusto", "rua Joao Firmino", 1500.00, 2);
+
+
+
+insert into Clientes values (168842799, "Vitor", 988887777, "rua 1", "lld2456", 948654876);
+
+insert into Carros values (null, "lld2456", "carro_2", "FordKa", 2019, null, 1, 1, "Vitor", "2021-12-01");
+update Carros set qtd_estoque = qtd_estoque - 1 where id = 3;
+insert into Historico values (null, 168842799, 3, null, "venda", 30000.00, 948654876, "2020-02-01");
+
+
+	
+insert into Carros values (null, "lld888", "carro_4", "Fusca", 1989, null, 1, 2, "Vitor", "2020-01-01");
+update Carros set qtd_estoque = qtd_estoque - 1 where id = 5;
+
+insert into Historico values (null, 168842799, 5, "lld7777", "troca", 40000.00, 948654876, "2020-01-01");
+update Carros set dono = "agencia" where placa = "lll7777";
+update Carros set valor = 35700.00 where placa = "lll7777";
+
+
+
+
+
+insert into Clientes values (137729996, "Vicente", null, "rua dos bobos", "lld1111", 134564326);
+
+	
+insert into Carros values (null, "lld1111", "carro_1", "Tesla", 2022, null, 1, 1, "Vicente", "2022-05-02");
+update Carros set qtd_estoque = qtd_estoque - 1 where id = 1;
+insert into Historico values (null, 137729996, 1, null, "venda", 500000.00, 134564326, "2022-04-02");
+
+	
+insert into Carros values (null, "lld2222", "carro_2", "FordKa", 2019, null, 1, 1, "Vicente", "2022-08-23");
+update Carros set qtd_estoque = qtd_estoque - 1 where id = 2;
+
+insert into Historico values (null, 137729996, 2, "lld1111", "troca", 470000.00, 134564326, "2022-08-23");
+update Carros set dono = "agencia" where placa = "lld1111";
+update Carros set valor = 25155.00 where placa = "lld1111";
+ 
+
+	
+insert into Carros values (null, "lld9999", "carro_1", "Tesla", 2022, null, 2, 1, "Vicente", now());
+update Carros set qtd_estoque = qtd_estoque - 1 where id = 1;
+
+insert into Historico values (null, 137729996, 1, "lld2222", "troca", 470000.00, 134564326, now());
+update Carros set dono = "agencia" where placa = "lld2222";
+update Carros set valor = 400000.00 where placa = "lld2222";
+
+
+
+
+
+insert into Clientes values (498621465, "Andre", null, "rua Macedo", "lld3333", 234524678);
+
+	
+insert into Carros values (null, "lld3333", "carro_5", "Palio", 2010, null, 20, 2, "Andre", "2017-09-22");
+update Carros set qtd_estoque = qtd_estoque - 1 where id = 6;
+insert into Historico values (null, 498621465, 6, null, "venda", 20220.00, 234524678, "2017-09-22");
+
+	
+insert into Carros values (null, "lld4444", "carro_6", "Uno", 2012, null, 15, 1, "Andre", "2019-05-15");
+update Carros set qtd_estoque = qtd_estoque - 1 where id = 8;
+
+insert into Historico values (null, 498621465, 8, "lld3333", "troca", 1800.00, 234524678, "2019-05-15");
+update Carros set dono = "agencia" where placa = "lld3333";
+update Carros set valor = 19200.00 where placa = "ccc3333";
+
+	
+insert into Carros values (null, "lld5555", "carro_7", "Tracker", 2009, null, 5, 2, "Andre", now());
+update Carros set qtd_estoque = qtd_estoque - 1 where id = 4;
+
+insert into Historico values (null, 498621465, 4, "lld4444", "troca", 17000.00, 234524678, now());
+update Carros set dono = "agencia" where placa = "lld4444";
+update Carros set valor = 19200.00 where placa = "lld4444";
+
+
+
+
+
+insert into Clientes values (486216662, "Liana", 978784545, "rua Natal", "lld0000", 134564326);
+
+	
+insert into Carros values (null, "lld0000", "carro_2", "FordKa", 2019, null, 20, 1, "Liana", now());
+update Carros set qtd_estoque = qtd_estoque - 1 where id = 2;
+insert into Historico values (null, 486216662, 2, null, "venda", 30000.00, 134564326, now());
